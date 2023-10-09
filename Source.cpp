@@ -8,15 +8,15 @@ bool isSaving = false;
 bool isLoading = false;
 sf::Texture texture;
 sf::Texture rules;
-const int xMax = 12;
-const int yMax = 12;
+const int xMax = 64;
+const int yMax = 64;
 //typedef int[][] terrain; //flag
 
 int main()
 {
     // create the window
     sf::ContextSettings settings;
-    sf::RenderWindow window(sf::VideoMode(900, 600), "My Original Map (Do not steal)", sf::Style::Default, settings);
+    sf::RenderWindow window(sf::VideoMode(940, 640), "My Original Map (Do not steal)", sf::Style::Default, settings);
     window.setFramerateLimit(60);
 
     // variables
@@ -114,17 +114,17 @@ int main()
                  switch (brushMode) {
                     //samples current selected map area
                     case 1:
-                        mouseSelection = map[(sf::Mouse::getPosition(window).x-300)/ 50][sf::Mouse::getPosition(window).y / 50];
+                        mouseSelection = map[(sf::Mouse::getPosition(window).x-300)/ 10][sf::Mouse::getPosition(window).y / 10];
                         brushMode = 0;
                     break;
                     //erases current selected map area
                     case 2:
-                        map[(sf::Mouse::getPosition(window).x-300)/ 50][sf::Mouse::getPosition(window).y / 50]=0;
+                        map[(sf::Mouse::getPosition(window).x-300)/ 10][sf::Mouse::getPosition(window).y / 10]=0;
                     break;
                     //changes map based on current mouseSelection
                     case 0:
                     default:
-                        map[(sf::Mouse::getPosition(window).x-300)/ 50][sf::Mouse::getPosition(window).y / 50]=mouseSelection;
+                        map[(sf::Mouse::getPosition(window).x-300)/ 10][sf::Mouse::getPosition(window).y / 10]=mouseSelection;
                         break;
                     }        
             }
@@ -144,7 +144,7 @@ int main()
         window.clear(sf::Color::Green);
 
         //draw menu border
-        window.draw(sf::RectangleShape(sf::Vector2f(300.f, 600.f)));
+        window.draw(sf::RectangleShape(sf::Vector2f(300.f, 640.f)));
         
         //draw menu here
         for (int i = 0; i < 3; i++) {  //iterates through all map items
@@ -159,10 +159,10 @@ int main()
         // draw map here...
         for (int i = 0; i < xMax; i++) {  //iterates through all map items
             for (int j = 0; j < yMax; j++) {
-                tempXmap = i*50+300; //offsets items to match map scale
-                tempYmap = j*50;
+                tempXmap = i*10+300; //offsets items to match map scale
+                tempYmap = j*10;
                 tempPosMap = sf::Vector2f(tempXmap, tempYmap);
-                window.draw(drawItem(tempPosMap, map[i][j], 5));
+                window.draw(drawItem(tempPosMap, map[i][j], 1));
             }
         }
 

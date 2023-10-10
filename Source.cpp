@@ -24,12 +24,14 @@ int main()
     float tempYmap = 0;
     float tempXmenu = 0;
     float tempYmenu = 0;
+    float mouseSize = 1;
     int map[xMax][yMax];
     sf::Vector2f tempPosMap;
     sf::Vector2f tempPosMenu;
     int menu[3][4];
     int mouseSelection=0;
     int brushMode=0;
+    sf::RectangleShape brush (sf::Vector2f(mouseSize,mouseSize));
 
     //various methods
     sf::Sprite drawItem(sf::Vector2f, int, int);
@@ -103,6 +105,22 @@ int main()
             brushMode = 2;
         }
 
+        //change brush size
+        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
+            mouseSize+=0.4;
+            if (mouseSize > 125)mouseSize = 125;
+        }
+        else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
+            mouseSize-=0.4;
+            if (mouseSize < 1)mouseSize = 1;
+        }
+        brush.setSize(sf::Vector2f(mouseSize, mouseSize));
+        brush.setOrigin(mouseSize/2.f, mouseSize/2.f);
+        brush.setPosition(sf::Mouse::getPosition(window).x, sf::Mouse::getPosition(window).y);
+        brush.setFillColor(sf::Color(0, 0, 0, 0));
+        brush.setOutlineThickness(2.f);
+        brush.setOutlineColor(sf::Color(0, 0, 0));
+
         //mouse 
         if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
             if (sf::Mouse::getPosition(window).x <= 300 && sf::Mouse::getPosition(window).y <= 320) {  //checks if mouse is in menu
@@ -119,12 +137,29 @@ int main()
                     break;
                     //erases current selected map area
                     case 2:
-                        map[(sf::Mouse::getPosition(window).x-300)/ 50][sf::Mouse::getPosition(window).y / 50]=0;
+                        //map[(sf::Mouse::getPosition(window).x-300)/ 50][sf::Mouse::getPosition(window).y / 50]=0;
+                        for (int i = ((sf::Mouse::getPosition(window).x - mouseSize/2 - 300) / 50);
+                            i<= ((sf::Mouse::getPosition(window).x + mouseSize / 2 -  300) / 50);
+                            i++) {
+                            for (int j = ((sf::Mouse::getPosition(window).y - mouseSize / 2 ) / 50);
+                                j <= ((sf::Mouse::getPosition(window).y + mouseSize / 2 ) / 50);
+                                j ++) {
+                                map[i][j] = 0;
+                            }
+                        }
                     break;
                     //changes map based on current mouseSelection
                     case 0:
                     default:
-                        map[(sf::Mouse::getPosition(window).x-300)/ 50][sf::Mouse::getPosition(window).y / 50]=mouseSelection;
+                        for (int i = ((sf::Mouse::getPosition(window).x - mouseSize / 2 - 300) / 50);
+                            i <= ((sf::Mouse::getPosition(window).x + mouseSize / 2 - 300) / 50);
+                            i ++) {
+                            for (int j = ((sf::Mouse::getPosition(window).y - mouseSize / 2) / 50);
+                                j <= ((sf::Mouse::getPosition(window).y + mouseSize / 2) / 50);
+                                j ++) {
+                                map[i][j] = mouseSelection;
+                            }
+                        }
                         break;
                     }        
             }
@@ -170,13 +205,8 @@ int main()
         window.draw(instruction);
 
         //draw mouse icon here
-        if (mouseSelection != 0 && brushMode != 2) {
-            window.draw(drawItem(
-                sf::Vector2f(
-                (float)sf::Mouse::getPosition(window).x,
-                (float)sf::Mouse::getPosition(window).y),
-                mouseSelection, 5));
-        }
+        window.draw(brush);
+
 
         // end the current frame
         window.display();

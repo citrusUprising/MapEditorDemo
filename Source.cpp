@@ -8,8 +8,8 @@ bool isSaving = false;
 bool isLoading = false;
 sf::Texture texture;
 sf::Texture rules;
-const int xMax = 12;
-const int yMax = 12;
+const int xMax = 16;
+const int yMax = 16;
 //typedef int[][] terrain; //flag
 
 int main()
@@ -108,7 +108,7 @@ int main()
         //change brush size
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
             mouseSize+=0.4;
-            if (mouseSize > 125)mouseSize = 125;
+            if (mouseSize > 128)mouseSize = 128;
         }
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
             mouseSize-=0.4;
@@ -122,46 +122,51 @@ int main()
         brush.setOutlineColor(sf::Color(0, 0, 0));
 
         //mouse 
-        if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
-            if (sf::Mouse::getPosition(window).x <= 300 && sf::Mouse::getPosition(window).y <= 320) {  //checks if mouse is in menu
-                //use menu to change mouseSelection
-                mouseSelection = menu[sf::Mouse::getPosition(window).x/100][sf::Mouse::getPosition(window).y / 80];
-                brushMode = 0;
-            }
-            else if (sf::Mouse::getPosition(window).x > 300){
-                 switch (brushMode) {
-                    //samples current selected map area
+        if (sf::Mouse::getPosition(window).x >= 0 &&
+            sf::Mouse::getPosition(window).x <= 812 &&
+            sf::Mouse::getPosition(window).y >= 0 &&
+            sf::Mouse::getPosition(window).y <= 512) {
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                if (sf::Mouse::getPosition(window).x <= 300 && sf::Mouse::getPosition(window).y <= 320) {  //checks if mouse is in menu
+                    //use menu to change mouseSelection
+                    mouseSelection = menu[sf::Mouse::getPosition(window).x / 100][sf::Mouse::getPosition(window).y / 80];
+                    brushMode = 0;
+                }
+                else if (sf::Mouse::getPosition(window).x > 300) {
+                    switch (brushMode) {
+                        //samples current selected map area
                     case 1:
-                        mouseSelection = map[(sf::Mouse::getPosition(window).x-300)/ 50][sf::Mouse::getPosition(window).y / 50];
+                        mouseSelection = map[(sf::Mouse::getPosition(window).x - 300) / 32][sf::Mouse::getPosition(window).y / 32];
                         brushMode = 0;
-                    break;
-                    //erases current selected map area
+                        break;
+                        //erases current selected map area
                     case 2:
                         //map[(sf::Mouse::getPosition(window).x-300)/ 50][sf::Mouse::getPosition(window).y / 50]=0;
-                        for (int i = ((sf::Mouse::getPosition(window).x - mouseSize/2 - 300) / 32);
-                            i<= ((sf::Mouse::getPosition(window).x + mouseSize / 2 -  300) / 32);
+                        for (int i = ((sf::Mouse::getPosition(window).x - mouseSize / 2 - 300) / 32);
+                            i <= ((sf::Mouse::getPosition(window).x + mouseSize / 2 - 300) / 32);
                             i++) {
-                            for (int j = ((sf::Mouse::getPosition(window).y - mouseSize / 2 ) / 32);
-                                j <= ((sf::Mouse::getPosition(window).y + mouseSize / 2 ) / 32);
-                                j ++) {
+                            for (int j = ((sf::Mouse::getPosition(window).y - mouseSize / 2) / 32);
+                                j <= ((sf::Mouse::getPosition(window).y + mouseSize / 2) / 32);
+                                j++) {
                                 map[i][j] = 0;
                             }
                         }
-                    break;
-                    //changes map based on current mouseSelection
+                        break;
+                        //changes map based on current mouseSelection
                     case 0:
                     default:
                         for (int i = ((sf::Mouse::getPosition(window).x - mouseSize / 2 - 300) / 32);
                             i <= ((sf::Mouse::getPosition(window).x + mouseSize / 2 - 300) / 32);
-                            i ++) {
+                            i++) {
                             for (int j = ((sf::Mouse::getPosition(window).y - mouseSize / 2) / 32);
                                 j <= ((sf::Mouse::getPosition(window).y + mouseSize / 2) / 32);
-                                j ++) {
+                                j++) {
                                 map[i][j] = mouseSelection;
                             }
                         }
                         break;
-                    }        
+                    }
+                }
             }
         }
 

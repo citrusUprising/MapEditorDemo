@@ -148,7 +148,9 @@ int main()
                             for (int j = ((sf::Mouse::getPosition(window).y - mouseSize / 2) / 32);
                                 j <= ((sf::Mouse::getPosition(window).y + mouseSize / 2) / 32);
                                 j++) {
-                                map[i][j] = 0;
+                                if(i < 16 && i >=0 && j >=0 && j < 16){
+                                    map[i][j] = 0;
+                                }
                             }
                         }
                         break;
@@ -161,7 +163,9 @@ int main()
                             for (int j = ((sf::Mouse::getPosition(window).y - mouseSize / 2) / 32);
                                 j <= ((sf::Mouse::getPosition(window).y + mouseSize / 2) / 32);
                                 j++) {
-                                map[i][j] = mouseSelection;
+                                if(i < 16 && i >= 0 && j >= 0 && j < 16) {
+                                    map[i][j] = mouseSelection;
+                                }
                             }
                         }
                         break;

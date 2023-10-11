@@ -8,15 +8,15 @@ bool isSaving = false;
 bool isLoading = false;
 sf::Texture texture;
 sf::Texture rules;
-const int xMax = 12;
-const int yMax = 12;
+const int xMax = 16;
+const int yMax = 16;
 //typedef int[][] terrain; //flag
 
 int main()
 {
     // create the window
     sf::ContextSettings settings;
-    sf::RenderWindow window(sf::VideoMode(900, 600), "My Original Map (Do not steal)", sf::Style::Default, settings);
+    sf::RenderWindow window(sf::VideoMode(812, 512), "My Original Map (Do not steal)", sf::Style::Default, settings);
     window.setFramerateLimit(60);
 
     // variables
@@ -108,7 +108,7 @@ int main()
         //change brush size
         if (sf::Keyboard::isKeyPressed(sf::Keyboard::Up)) {
             mouseSize+=0.4;
-            if (mouseSize > 125)mouseSize = 125;
+            if (mouseSize > 128)mouseSize = 128;
         }
         else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Down)) {
             mouseSize-=0.4;
@@ -122,46 +122,55 @@ int main()
         brush.setOutlineColor(sf::Color(0, 0, 0));
 
         //mouse 
-        if(sf::Mouse::isButtonPressed(sf::Mouse::Left)){
-            if (sf::Mouse::getPosition(window).x <= 300 && sf::Mouse::getPosition(window).y <= 320) {  //checks if mouse is in menu
-                //use menu to change mouseSelection
-                mouseSelection = menu[sf::Mouse::getPosition(window).x/100][sf::Mouse::getPosition(window).y / 80];
-                brushMode = 0;
-            }
-            else if (sf::Mouse::getPosition(window).x > 300){
-                 switch (brushMode) {
-                    //samples current selected map area
+        if (sf::Mouse::getPosition(window).x >= 0 &&
+            sf::Mouse::getPosition(window).x <= 812 &&
+            sf::Mouse::getPosition(window).y >= 0 &&
+            sf::Mouse::getPosition(window).y <= 512) {
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                if (sf::Mouse::getPosition(window).x <= 300 && sf::Mouse::getPosition(window).y <= 320) {  //checks if mouse is in menu
+                    //use menu to change mouseSelection
+                    mouseSelection = menu[sf::Mouse::getPosition(window).x / 100][sf::Mouse::getPosition(window).y / 80];
+                    brushMode = 0;
+                }
+                else if (sf::Mouse::getPosition(window).x > 300) {
+                    switch (brushMode) {
+                        //samples current selected map area
                     case 1:
-                        mouseSelection = map[(sf::Mouse::getPosition(window).x-300)/ 50][sf::Mouse::getPosition(window).y / 50];
+                        mouseSelection = map[(sf::Mouse::getPosition(window).x - 300) / 32][sf::Mouse::getPosition(window).y / 32];
                         brushMode = 0;
-                    break;
-                    //erases current selected map area
+                        break;
+                        //erases current selected map area
                     case 2:
                         //map[(sf::Mouse::getPosition(window).x-300)/ 50][sf::Mouse::getPosition(window).y / 50]=0;
-                        for (int i = ((sf::Mouse::getPosition(window).x - mouseSize/2 - 300) / 50);
-                            i<= ((sf::Mouse::getPosition(window).x + mouseSize / 2 -  300) / 50);
+                        for (int i = ((sf::Mouse::getPosition(window).x - mouseSize / 2 - 300) / 32);
+                            i <= ((sf::Mouse::getPosition(window).x + mouseSize / 2 - 300) / 32);
                             i++) {
-                            for (int j = ((sf::Mouse::getPosition(window).y - mouseSize / 2 ) / 50);
-                                j <= ((sf::Mouse::getPosition(window).y + mouseSize / 2 ) / 50);
-                                j ++) {
-                                map[i][j] = 0;
-                            }
-                        }
-                    break;
-                    //changes map based on current mouseSelection
-                    case 0:
-                    default:
-                        for (int i = ((sf::Mouse::getPosition(window).x - mouseSize / 2 - 300) / 50);
-                            i <= ((sf::Mouse::getPosition(window).x + mouseSize / 2 - 300) / 50);
-                            i ++) {
-                            for (int j = ((sf::Mouse::getPosition(window).y - mouseSize / 2) / 50);
-                                j <= ((sf::Mouse::getPosition(window).y + mouseSize / 2) / 50);
-                                j ++) {
-                                map[i][j] = mouseSelection;
+                            for (int j = ((sf::Mouse::getPosition(window).y - mouseSize / 2) / 32);
+                                j <= ((sf::Mouse::getPosition(window).y + mouseSize / 2) / 32);
+                                j++) {
+                                if(i < 16 && i >=0 && j >=0 && j < 16){
+                                    map[i][j] = 0;
+                                }
                             }
                         }
                         break;
-                    }        
+                        //changes map based on current mouseSelection
+                    case 0:
+                    default:
+                        for (int i = ((sf::Mouse::getPosition(window).x - mouseSize / 2 - 300) / 32);
+                            i <= ((sf::Mouse::getPosition(window).x + mouseSize / 2 - 300) / 32);
+                            i++) {
+                            for (int j = ((sf::Mouse::getPosition(window).y - mouseSize / 2) / 32);
+                                j <= ((sf::Mouse::getPosition(window).y + mouseSize / 2) / 32);
+                                j++) {
+                                if(i < 16 && i >= 0 && j >= 0 && j < 16) {
+                                    map[i][j] = mouseSelection;
+                                }
+                            }
+                        }
+                        break;
+                    }
+                }
             }
         }
 
@@ -179,25 +188,25 @@ int main()
         window.clear(sf::Color::Green);
 
         //draw menu border
-        window.draw(sf::RectangleShape(sf::Vector2f(300.f, 600.f)));
+        window.draw(sf::RectangleShape(sf::Vector2f(300.f, 512.f)));
         
         //draw menu here
         for (int i = 0; i < 3; i++) {  //iterates through all map items
             for (int j = 0; j < 4; j++) {
-                tempXmenu = i * 100+15; //offsets items to match menu scale
-                tempYmenu = j * 80+5;
+                tempXmenu = i * 100+18; //offsets items to match menu scale
+                tempYmenu = j * 80+8;
                 tempPosMenu = sf::Vector2f(tempXmenu, tempYmenu);
-                window.draw(drawItem(tempPosMenu, menu[i][j], 7));
+                window.draw(drawItem(tempPosMenu, menu[i][j], 2));
             }
         }
 
         // draw map here...
         for (int i = 0; i < xMax; i++) {  //iterates through all map items
             for (int j = 0; j < yMax; j++) {
-                tempXmap = i*50+300; //offsets items to match map scale
-                tempYmap = j*50;
+                tempXmap = i*32+300; //offsets items to match map scale
+                tempYmap = j*32;
                 tempPosMap = sf::Vector2f(tempXmap, tempYmap);
-                window.draw(drawItem(tempPosMap, map[i][j], 5));
+                window.draw(drawItem(tempPosMap, map[i][j], 1));
             }
         }
 
@@ -215,58 +224,58 @@ int main()
     return 0;
 }
 
-sf::Sprite drawItem(sf::Vector2f pos, int item = 0, int size = 5) {
+sf::Sprite drawItem(sf::Vector2f pos, int item = 0, int size = 1) {
     sf::Sprite sprite;
     sprite.setTexture(texture);
     sprite.setPosition(pos);
     sprite.setScale(sf::Vector2f(size, size));
     switch (item) {
         case 1:
-            sprite.setTextureRect(sf::IntRect(0, 0, 10, 10));
+            sprite.setTextureRect(sf::IntRect(0, 0, 32, 32));
             break;
 
         case 2:
-            sprite.setTextureRect(sf::IntRect(0, 10, 10, 10));
+            sprite.setTextureRect(sf::IntRect(0, 32, 32, 32));
             break;
             
         case 3:
-            sprite.setTextureRect(sf::IntRect(0, 20, 10, 10));
+            sprite.setTextureRect(sf::IntRect(0, 64, 32, 32));
             break;
 
         case 4:
-            sprite.setTextureRect(sf::IntRect(10, 0, 10, 10));
+            sprite.setTextureRect(sf::IntRect(32, 0, 32, 32));
             break;
 
         case 5:
-            sprite.setTextureRect(sf::IntRect(10, 10, 10, 10));
+            sprite.setTextureRect(sf::IntRect(32, 32, 32, 32));
             break;
 
         case 6:
-            sprite.setTextureRect(sf::IntRect(10, 20, 10, 10));
+            sprite.setTextureRect(sf::IntRect(32, 64, 32, 32));
         break;
 
         case 7:
-            sprite.setTextureRect(sf::IntRect(20, 0, 10, 10));
+            sprite.setTextureRect(sf::IntRect(64, 0, 32, 32));
             break;
 
         case 8:
-            sprite.setTextureRect(sf::IntRect(20, 10, 10, 10));
+            sprite.setTextureRect(sf::IntRect(64, 32, 32, 32));
             break;
 
         case 9:
-            sprite.setTextureRect(sf::IntRect(20, 20, 10, 10));
+            sprite.setTextureRect(sf::IntRect(64, 64, 32, 32));
             break;
 
         case 10:
-            sprite.setTextureRect(sf::IntRect(30, 0, 10, 10));
+            sprite.setTextureRect(sf::IntRect(96, 0, 32, 32));
             break;
 
         case 11:
-            sprite.setTextureRect(sf::IntRect(30, 10, 10, 10));
+            sprite.setTextureRect(sf::IntRect(96, 32, 32, 32));
             break;
 
         case 12:
-            sprite.setTextureRect(sf::IntRect(30, 20, 10, 10));
+            sprite.setTextureRect(sf::IntRect(96, 64, 32, 32));
             break;
 
         default:
